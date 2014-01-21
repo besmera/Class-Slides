@@ -1,7 +1,7 @@
 pandoc-seed-project
 ===================
 
-Seed git repo for [pandoc](https://github.com/jgm/pandoc) based projects. Just clone and type.
+Seed git repo for [pandoc](https://github.com/jgm/pandoc) based projects. Just clone and pandoc.
 
 Inspired by projects like [ultimate-seed](https://github.com/pilwon/ultimate-seed) and [angular-seed](https://github.com/angular/angular-seed). This seed aims to include necessary tools/scripts to automate pandoc compilation.
 
