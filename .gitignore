@@ -24,11 +24,3 @@ node_modules
 Icon?
 ehthumbs.db
 Thumbs.db
-
-# instanbul #
-################
-coverage
-
-# coveralls.io #
-################
-.coveralls.yml
