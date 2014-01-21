@@ -47,3 +47,6 @@ I'm currently using this setup for my personal pandoc project; mainly for my mar
 The gulpfile.js file I provided is set up for additional support of [MathJax](http://mathjax.org/) from [mathjax-lazyload](https://github.com/Dashed/mathjax-lazyload). It's supported for HTML generated pages with a lot of math (LaTeX) elements.
 
 In the future, I'll provide variations of gulpfile.js.
+
+
+This project replaces/deprecates [grunt-pandoc](https://github.com/Dashed/grunt-pandoc); a workflow I used to use.
