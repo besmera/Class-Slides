@@ -12,7 +12,7 @@
     "gulp-plumber": "~0",
     "gulp-watch": "~0",
     "gulp-ignore": "~0",
-    "gulp-livereload": "~0",
+    "gulp-livereload": "*",
     "tiny-lr": "~0"
   },
   "devDependencies": {},

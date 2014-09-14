@@ -36,8 +36,16 @@ gulp.task('default', function() {
     opts.args.push('-S');
     opts.args.push('-s');
     opts.args.push('-t');
-    opts.args.push('html5');
-    opts.args.push('--template=' + path.join(__dirname, './html/assets/default.html5'));
+    opts.args.push('revealjs');
+    opts.args.push('--template=' + path.join(__dirname, './html/assets/revealjs.html'));
+    opts.args.push('-V');
+    opts.args.push('theme=sky');
+    opts.args.push('-V');
+    opts.args.push('highlight-theme=zenburn');
+    opts.args.push('-V');
+    opts.args.push('revealjs-url=../reveal.js');
+    opts.args.push('--no-highlight'); //For pandoc highlights not reveal
+    opts.args.push('--toc-depth=1');
 
     var magic = function(file, opts, cb) {
 
@@ -53,7 +61,7 @@ gulp.task('default', function() {
         // mathjax = path.join(__dirname, './html/assets/mathjax-MathJax-727332c/MathJax.js'),
         mathjax = 'http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML',
         mathjax_lazy = path.join(__dirname, './html/assets/mathjax-lazyload.min.js'),
-        css = path.join(__dirname, './html/assets/style.css');
+        css = path.join(__dirname, './html/assets/custom.css');
 
         // mark assets relative to 'this' file
         var relpath = function(asset) {
@@ -71,6 +79,30 @@ gulp.task('default', function() {
 
         return cb(file, opts);
     };
+
+    //For image assets, etc...
+    watch({glob: path.join(src_docs, '**/!(*.md)') })
+        .on('error', console.log)
+        .pipe(plumb())
+        .pipe(ignore({isDirectory:true}))
+            .on('data', function(file) {
+                file.orig_path = file.path;
+            })
+	.pipe(gulp.dest(dest_docs))
+            .on('data', function(file) {
+	console.log(file);
+                if(!file.path)
+                    return;
+                var
+                abs_path_to = path.normalize(__dirname + '/' + file.path),
+                to = path.normalize(dest_docs + '/' + path.relative(__dirname + '/' 			+ src_docs, abs_path_to)),
+                from = path.relative(__dirname, file.orig_path);
+
+                gutil.log("Deployed asset '" + from + "' to '" + to + "'");
+
+            })
+        .pipe(livereload(server));
+
 
     watch({glob: path.join(src_docs, '**/*.md') })
         .on('error', console.log)
