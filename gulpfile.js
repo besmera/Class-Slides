@@ -90,7 +90,7 @@ gulp.task('default', function() {
             })
 	.pipe(gulp.dest(dest_docs))
             .on('data', function(file) {
-	console.log(file);
+	//console.log(file);
                 if(!file.path)
                     return;
                 var
