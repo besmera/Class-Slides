@@ -21,11 +21,11 @@ dl {
 	background-color: #EEEEEE;
 	margin-bottom: 20px !important;
 }
-/**
+
 dt, dd {
 	display: inline;
 }
-*/
+
 dt {
 	font-weight: 900 !important;
 	text-decoration: underline;
@@ -37,6 +37,14 @@ dt:after {
 
 .level2 h1 {
 	font-size: 1.5em;
+}
+
+section > h3.warning {
+	font-size: 1em;
+}
+
+section > h3.warning > a {
+	color: red !important;
 }
 
 code {
