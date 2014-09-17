@@ -549,14 +549,12 @@ $lastName = $_POST["lastName"];
 ?>
 <html> 
 	<head>
-		<title>Hello <?php echo $firstName . $lastName . "!"; ?></title>
+		<title>Hello <?php echo $firstName . " " . $lastName . "!"; ?></title>
 	</head>
 	<body> 
-
-
 		<form method="POST" action="<?php echo $PHP_SELF; ?>"> 
-			First Name: <input type="text" name="firstName"><br /> 
-			Last Name: <input type="text" name="lastName">
+			First Name: <input type="text" name="firstName"></input><br /> 
+			Last Name: <input type="text" name="lastName"></input>
 			<input type="submit" value="submit" name="submit">
 		</form>
 	</body>
@@ -566,7 +564,7 @@ $lastName = $_POST["lastName"];
 [^XSS]: XSS has been left in example for simplicity.
 
 <div class="notes">
-
+This is some notes
 </div>
 
 
