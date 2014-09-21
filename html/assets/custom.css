@@ -53,3 +53,8 @@ code {
 	background-color: #DCDCDC;
 	padding: 5px 5px;
 }
+
+#integers > table td
+{
+	font-size: .7em;
+}
