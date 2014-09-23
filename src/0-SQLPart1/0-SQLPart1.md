@@ -115,9 +115,9 @@ CREATE TABLE Product (
 
 ## Floats
 
-* Floating point (real) numbers: `FLOAT`, `DOUBLE`, `DOUBLE PRECISION`
-	* `FLOAT` uses 4 bytes, `DOUBLE [PRECISION]` uses 8 bytes
-	* ***WARNING***: These are approximations!
+* Floating point (real) numbers: `FLOAT`, `DOUBLE`
+	* `FLOAT` uses 4 bytes, `DOUBLE` uses 8 bytes
+	* ***WARNING***: These data types are approximations!
 	* Try testing `DOUBLE` against `DECIMAL`
 
 ```SQL
@@ -156,19 +156,23 @@ Select floor(sum(val)*10) from DBLTest;
 ## Text
 
 * `CHAR(M)`
+	* $M$ is number of characters
+		* $M \in \{0,1,2,...,255\}$
+	* Space padded, see example.
 * `VARCHAR(M)` 
-* $M$ is number of characters
-	* For ASCII $M \in \{0,1,2,...,65535\}$
-	* For UTF-8 $M \in \{0,1,2,...,21844\}$ 
+	* For ASCII (1B) $M \in \{0,1,2,...,65535\}$
+	* For UTF-8 (3B) $M \in \{0,1,2,...,21844\}$ 
 * How many bytes needed to store 256 characters of ASCII?
 * How many bytes needed to store 256 characters of UTF-8?
 
 
 ## Binary
 
-* `BINARY(M)`
+* `BINARY(M)` 
+	* $M$ is number of bytes
+	* $M \in \{0,1,2,...,255\}$
 * `VARBINARY(M)`
-* $M$ is number of bytes
+	* $M \in \{0,1,2,...,65535\}$
 	* How many bytes need to store 255 bytes?
 
 ## Text & Blob
@@ -218,28 +222,42 @@ CREATE DOMAIN SSN_TYPE AS CHAR(9);
 CHECK (Dnumber > 0 AND Dnumber < 21)
 ```
 
-## Keys
+## Key
 
 * `PRIMARY KEY` clause
 	* Specifies one or more attributes that makeup the primary key for the table
-
-```sql
-Dnumber INT PRIMARY KEY
-```
-
+	* Implicitly says `NOT NULL`
 * `UNIQUE` clause
 	* Specifies alternate keys
+	* NULLs are allowed on this attribute unless you specify `NOT NULL`
 
 ```sql
-Dname VARCHAR(15) UNIQUE
+Dnumber INT PRIMARY KEY  -- as part of attribute options
+```
+
+```sql
+Dname VARCHAR(15) UNIQUE  -- as part of attribute options
+```
+
+```sql
+PRIMARY KEY (Dnumber)  -- as part of table options
+```
+
+```sql
+UNIQUE KEY (Dname)  -- as part of table options
 ```
 
 ## Keys
 
 * `FOREIGN KEY` clause
 	* Default operation is reject when violated
+	* Must provide `REFERENCES` 
 	* Can attach referential triggered action to `ON DELETE` or `ON UPDATE`
-		* `SET NULL`, `CASCADE`, and `SET DEFAULT`
+		* `SET NULL`, `CASCADE`, `RESTRICT` and `SET DEFAULT`
+
+```sql
+FOREIGN KEY (super_ssn) REFERENCES (ssn)  -- as part of table options
+```
 
 # Creation
 
@@ -252,8 +270,8 @@ CREATE TABLE tbl_name
 	...
 	col_nameN TYPE [options],
 	PRIMARY KEY(col_Name),
-	FOREIGN KEY (col_name) REFERENCES EMPLOYEE(other_col_name)
-	); [table_options]
+	FOREIGN KEY (col2_name) REFERENCES tbl2_name(other_col_name)
+	); [table_options]  -- Note FK can reference same table too!
 ```
 
 ## Create Table
@@ -271,9 +289,9 @@ CREATE TABLE EMPLOYEE
 	Salary DECIMAL(10,2),
 	Super_ssn CHAR(9),
 	Dno INT NOT NULL,
-		PRIMARY KEY (Ssn),
-		FOREIGN KEY (Super_ssn) REFERENCES EMPLOYEE(Ssn),
-		FOREIGN KEY (Dno) REFERENCES DEPARTMENT(Dnumber)
+	PRIMARY KEY (Ssn),
+	FOREIGN KEY (Super_ssn) REFERENCES EMPLOYEE(Ssn),
+	FOREIGN KEY (Dno) REFERENCES DEPARTMENT(Dnumber)
 	);
 
 CREATE TABLE DEPARTMENT
@@ -282,9 +300,9 @@ CREATE TABLE DEPARTMENT
 	Dnumber INT NOT NULL,
 	Mgr_ssn CHAR(9) NOT NULL,
 	Mgr_start_date DATE,
-		PRIMARY KEY (Dnumber),
-		UNIQUE (Dname),
-		FOREIGN KEY (Mgr_ssn) REFERENCES EMPLOYEE(Ssn)
+	PRIMARY KEY (Dnumber),
+	UNIQUE (Dname),
+	FOREIGN KEY (Mgr_ssn) REFERENCES EMPLOYEE(Ssn)
 	);
 ```
 
@@ -293,11 +311,36 @@ CREATE TABLE DEPARTMENT
 * Some FK's may cause errors... which goes first?
 * How can you fix?
 
-\ 
+> Deviation from SQL standards: ... InnoDB checks foreign key constraints immediately; the check is not deferred to transaction commit. According to the SQL standard, the default behavior should be deferred checking. That is, constraints are only checked after the entire SQL statement has been processed. Until InnoDB implements deferred constraint checking, some things will be impossible, such as deleting a record that refers to itself using a foreign key.
 
 ```sql
 ALTER TABLE tbl_name ADD FOREIGN KEY (col_name) REFERENCES other_tbl(other_col);
 ```
+
+# Insertion
+
+## Insert
+
+* Insert data using the `INSERT` statement
+	* If using `VALUES` only syntax you MUST specify a value for every column, in order
+		* Recall ordered list of values
+	* Alternatively can supply the column or attribute names
+		* Forms the ordered pair across `VALUES`
+
+```sql
+INSERT INTO table_name VALUES (value1,value2,value3,...);
+-- OR
+INSERT INTO table_name (column1,column2,column3,...) VALUES (value1,value2,value3,...);
+```
+
+## Practice
+
+* Lets create a `Product` table with:
+	* `itemName`
+	* `quantity`
+	* `price` 
+* Row size?
+* Then fill it with some data
 
 # Retrieval
 
@@ -327,7 +370,16 @@ Selection condition
 
 * Logical Operators
 	* `AND`, `OR`, `NOT`
+	* More on `NOT` later
 
+## Practice 
+
+1) What are all the products?
+2) Which products have a price greater than or equal to 10.00?
+3) Which products are not priced at .99?
+4) Which products are priced at .99?
+5) Which products are between 5.00 and 10.00?
+6) Which products are less than 5.00 or greater than 10.00?
 
 
 <div class="notes">
