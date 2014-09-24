@@ -177,6 +177,11 @@ Select floor(sum(val)*10) from DBLTest;
 
 ## Text & Blob
 
+* Contributes 9-12B toward total row size
+* 8B + Length Bytes 
+
+\ 
+
 | BLOB         |    TEXT      | Length Bytes | Max Size? |
 | :----------: | :----------: | :--------:   | :-------: |
 | `TINYBLOB`   | `TINYTEXT`   | 1            | ?         |
@@ -184,9 +189,20 @@ Select floor(sum(val)*10) from DBLTest;
 | `LONGBLOB`   | `LONGTEXT`   | 4            | ?         |
 | `BLOB(M)`    | `TEXT(M)`    | Min Needed   | ?         |
 
+
 ## Row Size
 
 * Calculating total row size
+	* If we used `MEDIUMBLOB NOT NULL` how big of a `VARCHAR(M) NOT NULL` could we store?
+		* `VARCHAR(M) NULL`?
+	* Calculate row size for table
+
+<div class="notes">
+Method I used:
+Space left in row when using TINYBLOB NOT NULL 65535-(8+1)=65526
+Space left in row when using VARCHAR NOT NULL > 255 65526-(2) = 65524Space left in row when using MEDIUMBLOB NOT NULL 65535-(8+3)=65524
+Space left in row when using VARCHAR NOT NULL > 255 65524-(2) = 65522
+</div>
 
 # Constraints
 
@@ -308,14 +324,22 @@ CREATE TABLE DEPARTMENT
 
 ## Chicken Egg
 
-* Some FK's may cause errors... which goes first?
+* Some FK's may cause errors when creating tables
 * How can you fix?
 
-> Deviation from SQL standards: ... InnoDB checks foreign key constraints immediately; the check is not deferred to transaction commit. According to the SQL standard, the default behavior should be deferred checking. That is, constraints are only checked after the entire SQL statement has been processed. Until InnoDB implements deferred constraint checking, some things will be impossible, such as deleting a record that refers to itself using a foreign key.
+. . . 
 
 ```sql
 ALTER TABLE tbl_name ADD FOREIGN KEY (col_name) REFERENCES other_tbl(other_col);
 ```
+
+## Chicken Egg
+
+* Same applies for rows, see `EMPLOYEE.Dno` and `DEPARTMENT.Mgr_ssn`
+
+> Deviation from SQL standards: ... InnoDB checks foreign key constraints immediately; the check is not deferred to transaction commit. According to the SQL standard, the default behavior should be deferred checking. That is, constraints are only checked after the entire SQL statement has been processed. Until InnoDB implements deferred constraint checking, some things will be impossible, such as deleting a record that refers to itself using a foreign key.
+
+
 
 # Insertion
 
@@ -336,7 +360,7 @@ INSERT INTO table_name (column1,column2,column3,...) VALUES (value1,value2,value
 ## Practice
 
 * Lets create a `Product` table with:
-	* `itemName`
+	* `name`
 	* `quantity`
 	* `price` 
 * Row size?
@@ -349,9 +373,12 @@ INSERT INTO table_name (column1,column2,column3,...) VALUES (value1,value2,value
 `SELECT`
 :   Basic statement used to retreive data from DBMS.
 
+\ 
+
 ```sql
-SELECT <attributes> FROM <tables> WHERE <conditions>;
+SELECT <projection attributes> FROM <tables> WHERE <selection conditions> ORDER BY <attribute list>;
 ```
+\ 
 
 Projection attributes
 :   The attribute names whose values will be retrieved by the query. A `*` indicates all.
@@ -366,11 +393,34 @@ Selection condition
 ## Comparison
 
 * Relational Comparison Operators
-	* `=`, `<`, `<=`, `>`, `>=`, and `<>`
+	* `=` - note the lack of a double equals
+	* `<`, `<=`, `>`, `>=`, and `<>`
 
 * Logical Operators
 	* `AND`, `OR`, `NOT`
 	* More on `NOT` later
+
+## Order
+
+* DBMS will make no guarantee of the order without an `ORDER BY` clause
+	* Can order `ASC` for ascending or `DESC` for descending
+	* Can provide multiple attributes to sort on
+
+```sql
+SELECT name FROM Product WHERE price > 2 ORDER BY price DESC, name ASC;
+```
+	
+
+## Conceptual Steps
+
+* Iterate over each row
+* Check selection condition
+* Order rows
+* Project attributes/columns
+
+```sql
+SELECT name FROM Product WHERE price > 2 ORDER BY price;
+```
 
 ## Practice 
 
