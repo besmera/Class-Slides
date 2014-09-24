@@ -8,19 +8,24 @@
 * Functions help make reusable code
 * A function can be written once and used over and over
 * Functions have a specific purpose like add two numbers
-* Functions can take 0, 1, or more arguments
-* Functions may, but does not have to, return a value
-* You call (or invoke) a function by providing it arguments
+	* Calling the function with a different set of inputs can provide different results
+* PHP has many different functions pre-built in for you to use
+	* A [complete list](http://php.net/manual/en/indexes.functions.php)
 
 ## Function
 
-* `isset()` is a function that takes one argument
-* The argument passed to it will be checked
-	* Returns `true` if set
-	* Returns `false` if not
+* Functions can take 0, 1, or more arguments
+	* The order of the arguments does matter
+	* Arguments are mapped in order to their parameters (more next class)
+* Functions may, but do not have to, return a value
+	* If they do not have a return you are provided with `NULL`
+* You call (or invoke) a function by providing it arguments
 
 ```php
-isset($_POST["applyTax"]);
+myFunction(); //No arguments
+myFunction($arg1); //One argument
+myFunction($arg1, $arg2); //Two arguments
+myFunction($arg1, $arg2, ..., $argN); //N arguments
 ```
 
 ## Function
@@ -80,7 +85,26 @@ $tests = array(
 
 # Misc 
 
-## var_dump
+## Lab 3
+
+* There is not one way to solve these lab problems or indeed any programming problem
+
+. . . 
+
+* Not everything we learn will immediately apply to a lab
+	* Think about what we learned does
+	* See if it helps you solve your problem
+	* Did anyone use `%`, `$var++`, or `--$var` for Lab 3?	
+
+. . . 
+
+* Most used `isset($_POST["invoiceItem1"])`
+	* Based on what we learned this was best option, why?
+	* What problem does this technique have?
+
+## $_SERVER
+
+* New super global variable `$_SERVER`
 * `var_dump()` takes an argument and outputs it to the screen
 
 ```php
