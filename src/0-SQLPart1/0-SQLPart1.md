@@ -400,6 +400,19 @@ Selection condition
 	* `AND`, `OR`, `NOT`
 	* More on `NOT` later
 
+## Comparison/Arithmetic
+* `LIKE` comparison operator
+	* Used for string pattern matching
+	* `%` replaces an arbitrary number of zero or more characters
+	* `_` replaces a single character
+
+* Standard arithmetic operators
+	* Addition `+`, subtraction `–`, multiplication `*`, and division `/` 
+
+* BETWEEN comparison operator
+	* `WHERE DNumber BETWEEN 1 AND 2`
+
+
 ## Order
 
 * DBMS will make no guarantee of the order without an `ORDER BY` clause
@@ -410,6 +423,17 @@ Selection condition
 SELECT name FROM Product WHERE price > 2 ORDER BY price DESC, name ASC;
 ```
 	
+## Duplicates
+
+* SQL does not automatically eliminate ***duplicate rows***
+* Use keyword `DISTINCT` with a `SELECT`
+
+```sql
+SELECT salary FROM EMPLOYEE;
+
+SELECT DISTINCT salary FROM EMPLOYEE; 
+``` 
+
 
 ## Conceptual Steps
 
@@ -422,6 +446,18 @@ SELECT name FROM Product WHERE price > 2 ORDER BY price DESC, name ASC;
 SELECT name FROM Product WHERE price > 2 ORDER BY price;
 ```
 
+## Views
+
+* Last thing before we practice...
+
+\ 
+
+* Virtual relations can be created as a view
+
+```sql
+CREATE VIEW ProductValues AS SELECT qty*price AS value FROM Product;
+```
+
 ## Practice 
 
 1) What are all the products?
@@ -430,6 +466,174 @@ SELECT name FROM Product WHERE price > 2 ORDER BY price;
 4) Which products are priced at .99?
 5) Which products are between 5.00 and 10.00?
 6) Which products are less than 5.00 or greater than 10.00?
+
+# Modification
+
+## UPDATE
+
+* `UPDATE` Syntax
+
+```sql
+UPDATE table SET col1=val1, col2=val2 WHERE col3=val3;
+```
+
+* WARNING: Failure to include a WHERE clause will cause it to operate on all rows!!!!
+
+
+## DELETE
+
+* `DELETE` Syntax 
+```sql
+DELETE FROM table WHERE col1=val1;
+```
+* WARNING: Failure to include a WHERE clause will cause it to operate on all rows!!!!
+
+# Multiple Tables
+
+## Selection 
+
+* When selecting from multiple tables you must `JOIN` them
+* Types of JOINS
+	* `CROSS JOIN` - Cartesian product
+	* INNER - Implicit vs Explicit
+		* EQUI & NON-EQUI 
+			* `INNER JOIN` or `JOIN`
+		* NATURAL
+			* `NATURAL JOIN`
+	* OUTER
+		* `LEFT JOIN`
+		* `RIGHT JOIN`
+		* `FULL JOIN` [^FeatureRequest]
+
+[^FeatureRequest]: [FULL JOIN Bug Report](http://bugs.mysql.com/bug.php?id=18003)
+
+
+## JOIN PDF
+
+* Refer to `JOIN` PDF
+
+## Ambiguous Attributes
+
+* Same name can be used for two or more attributes (in different relations/tables)
+* When selecting must **qualify** the attribute name with relation name
+	* `EMPLOYEE.Dnumber`
+
+```sql
+SELECT Fname, EMPLOYEE.Name, Address FROM EMPLOYEE, DEPARTMENT
+WHERE DEPARTMENT.Name = 'Research' AND DEPARTMENT.Dnumber = EMPLOYEE.Dnumber;
+```
+
+## Aliasing
+
+* Alias using the AS keyword
+
+```sql
+EMPLOYEE AS E(Fn, Mi, Ln, Ssn, Bd, Addr, Sex, Sal, Sssn, Dno)
+
+-- Now can use Select E.Fn, E.Ln .....
+
+-- MySQL Ex: Select C.id AS i, C.Name AS n FROM Company AS C;
+```
+
+
+## ER Diagram
+
+![Product Company Category ER](Product-Category-Company-ER.png)
+
+* Convert to Relations
+
+## Pure Relations
+
+![Product Company Category Pure Relations](Product-Category-Company-Pure-Relations.drawio.png)
+
+* Make SQL `CREATE TABLE`
+* Calculate Row Sizes
+
+
+## Sensible Relations
+
+![Product Company Category Sensible Relations](Product-Category-Company-Relations.drawio.png)
+
+* Make SQL `CREATE TABLE`
+* Calculate Row Sizes
+
+## SQL
+
+```sql
+
+-- DROP Existing
+
+DROP TABLE Product, Company, Category;
+
+-- Create Product Table
+
+CREATE TABLE Product (
+ id SMALLINT UNSIGNED NOT NULL auto_increment,
+ name VARCHAR(50) NOT NULL,
+ qty SMALLINT NOT NULL,
+ price DOUBLE(7,2) NOT NULL,
+ company SMALLINT UNSIGNED default NULL,
+ category SMALLINT UNSIGNED default NULL,
+ PRIMARY KEY  (id)
+ ) ENGINE=InnoDB ;
+
+-- Create Category Table
+
+CREATE TABLE Category (
+ id SMALLINT UNSIGNED NOT NULL auto_increment,
+ name VARCHAR(50) NOT NULL,
+ PRIMARY KEY  (id)
+) ENGINE=InnoDB ;
+
+-- Add Category Foreign Key
+
+ALTER TABLE Product ADD FOREIGN KEY (category) REFERENCES Category(id);
+
+-- Create Company Table
+
+CREATE TABLE Company (
+ id SMALLINT UNSIGNED NOT NULL auto_increment,
+ name VARCHAR(50) NOT NULL,
+ PRIMARY KEY  (id)
+) ENGINE=InnoDB ;
+
+-- Add Company Foreign Key
+
+ALTER TABLE Product ADD FOREIGN KEY (Company) REFERENCES Company(id);
+
+-- Fill Category Table
+
+INSERT INTO Category (name) VALUES ("Toys"), ("Tools"), ("Health");
+
+-- Fill Company Table
+
+Insert INTO Company (name) VALUES ("LEGO"), ("Craftsman"), ("Stanley"), ("Crest");
+
+-- Fill Product Table
+
+Insert INTO Product (name, category, company, qty, price) Select "Batman Lego Set", Category.id, Company.id, 1, 9.99 from Category, Company WHERE Category.name = "Toys" AND Company.name = "LEGO";
+
+Insert INTO Product (name, category, company, qty, price) Select "32 Piece Ratchet Set", Category.id, Company.id, 2, 29.99 from Category, Company WHERE Category.name = "Tools" AND Company.name = "Stanley";
+
+Insert INTO Product (name, category, company, qty, price) Select "Hammer", Category.id, Company.id, 5, 5.99 from Category, Company WHERE Category.name = "Tools" AND Company.name = "Stanley";
+
+Insert INTO Product (name, category, company, qty, price) Select "Toothpaste", Category.id, Company.id, 1, 2.99 from Category, Company WHERE Category.name = "Health" AND Company.name = "Crest";
+
+Insert INTO Product (name, category, company, qty, price) Select "Floss", Category.id, Company.id, .99 from Category, Company WHERE Category.name = "Health" AND Company.name = "Crest";
+
+Insert INTO Product (name, category, company, qty, price) Select "Power Drill", Category.id, NULL, 5, 49.99 from Category WHERE Category.name = "Tools";
+
+Insert INTO Product (name, category, company, qty, price) Select "120 Piece Lego Set", NULL, Company.id, 1, 12.99 from Company WHERE Company.name = "LEGO";
+
+Insert INTO Product (name, category, company, qty, price) Select "Hot-wheels Car", NULL, NULL, 10, .99 ;
+
+```
+
+## JOIN Practice
+
+* Practice `JOIN`s
+
+
 
 
 <div class="notes">
