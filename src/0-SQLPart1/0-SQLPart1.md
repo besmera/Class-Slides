@@ -631,9 +631,21 @@ Insert INTO Product (name, category, company, qty, price) Select "Hot-wheels Car
 
 ## JOIN Practice
 
-* Practice `JOIN`s
+1) Create a view showing the values of the product on hand.
+2) Select all the products and the category that the product is in.
+	* Implicit
+	* Explicit
+3) Select the *product name* and the *category name* of all the products.
 
+## JOIN Practice
 
+4) Select all the products, the categories they belong to, and the company the product is made by. Hint: LEFT LEFT!
+	* Update the company Stanley to Stanley Black and Decker and rerun
+5) Select all the products in the tools category with a price greater than 10.00.
+	* Now only those made by Stanley Black and Decker.
+6) Delete the matchbox company.
+	* Why did this happen?
+	* What can you do? Do it! Try again.
 
 
 <div class="notes">
