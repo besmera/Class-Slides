@@ -107,7 +107,7 @@ require("footer.php");
 	* Also useful for forms with no visible input
 
 ```html
-<input type="hiden" name="sku" value="456789"></input>
+<input type="hidden" name="sku" value="456789"></input>
 ```
 
 ## Hidden
