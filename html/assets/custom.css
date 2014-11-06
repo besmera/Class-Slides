@@ -80,9 +80,11 @@ github.com style (c) Vasily Polovnyov <vast@whiteants.net>
 */
 
 pre code {
-  display: block; padding: 0.5em;
-  color: #333;
-  background: #f8f8ff
+  display: block !important; 
+  padding: 0.5em !important;
+  color: #333 !important;
+  background: #f8f8ff !important;
+
 }
 
 pre .comment,
